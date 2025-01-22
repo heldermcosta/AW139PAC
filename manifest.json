@@ -1,6 +1,6 @@
 {
-    "name": "aw139_power_assurance",
-    "short_name": "aw139_power_assurance",
+    "name": "AW139 Power Assurance Calculator",
+    "short_name": "AW139PAC",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
@@ -10,26 +10,46 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
+            "purpose": "maskable",
+            "sizes": "48x48",
+            "src": "assets/maskable_icon_x48.png",
             "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
+          },
+          {
+            "purpose": "maskable",
+            "sizes": "72x72",
+            "src": "assets/maskable_icon_x72.png",
             "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
+          },
+          {
+            "purpose": "maskable",
+            "sizes": "96x96",
+            "src": "assets/maskable_icon_x96.png",
+            "type": "image/png"
+          },
+          {
+            "purpose": "maskable",
+            "sizes": "128x128",
+            "src": "assets/maskable_icon_x128.png",
+            "type": "image/png"
+          },
+          {
+            "purpose": "maskable",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
+            "src": "assets/maskable_icon_x192.png",
+            "type": "image/png"
+          },
+          {
+            "purpose": "maskable",
+            "sizes": "384x384",
+            "src": "assets/maskable_icon_x384.png",
+            "type": "image/png"
+          },
+          {
+            "purpose": "maskable",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
+            "src": "assets/maskable_icon_x512.png",
+            "type": "image/png"
+          }
     ]
 }
