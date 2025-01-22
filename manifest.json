@@ -5,50 +5,50 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "AW139 helicopter Power Assurance Calculator",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
             "purpose": "maskable",
             "sizes": "48x48",
-            "src": "assets/maskable_icon_x48.png",
+            "src": "icons/maskable_icon_x48.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "72x72",
-            "src": "assets/maskable_icon_x72.png",
+            "src": "icons/maskable_icon_x72.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "96x96",
-            "src": "assets/maskable_icon_x96.png",
+            "src": "icons/maskable_icon_x96.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "128x128",
-            "src": "assets/maskable_icon_x128.png",
+            "src": "icons/maskable_icon_x128.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "192x192",
-            "src": "assets/maskable_icon_x192.png",
+            "src": "icons/maskable_icon_x192.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "384x384",
-            "src": "assets/maskable_icon_x384.png",
+            "src": "icons/maskable_icon_x384.png",
             "type": "image/png"
           },
           {
             "purpose": "maskable",
             "sizes": "512x512",
-            "src": "assets/maskable_icon_x512.png",
+            "src": "icons/maskable_icon_x512.png",
             "type": "image/png"
           }
     ]
