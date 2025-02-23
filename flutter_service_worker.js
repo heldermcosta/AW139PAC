@@ -60,7 +60,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "fa4e782c9e5173d4d9014920be1397ab
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
-               "./",
+               "/AW139/",
 "index.html",
 "flutter_bootstrap.js",
 "assets/AssetManifest.bin.json",
