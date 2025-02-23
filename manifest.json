@@ -1,7 +1,8 @@
 {
     "name": "AW139 Power Assurance Calculator",
     "short_name": "AW139PAC",
-    "start_url": "/AW139PAC/",
+    "start_url": "./",
+    "scope": "./",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
