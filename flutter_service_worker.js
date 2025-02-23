@@ -52,7 +52,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "fa4e782c9e5173d4d9014920be1397ab
 "icons/maskable_icon_x72.png": "be66a9649fa714c500dc543b5c146c83",
 "icons/maskable_icon_x96.png": "12d39a71ab033765dad580a6b1fe0e49",
 "index.html": "7bb296e4183b3f121a4276e2f42ba9b6",
-"/AW139PAC/": "7bb296e4183b3f121a4276e2f42ba9b6",
+"/": "7bb296e4183b3f121a4276e2f42ba9b6",
 "main.dart.js": "4b90804976b02a083a54fd5a7055c233",
 "manifest.json": "5fd33967bf8e3b3464465504f0c213c2",
 "version.json": "edbe3d570bf3a6e812d256a905e5c2d3"};
