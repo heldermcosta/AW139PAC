@@ -54,10 +54,10 @@ const RESOURCES = {"assets/AssetManifest.bin": "fa4e782c9e5173d4d9014920be1397ab
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
-  "assets/assets/100withEAPS.jpg",
+"assets/assets/100withEAPS.jpg",
 "assets/assets/100withIBF.jpg",
 "assets/assets/100withoutEAPS.jpg",
-"ssets/assets/102withEAPS.jpg",
+"assets/assets/102withEAPS.jpg",
 "assets/assets/102withIBF.jpg",
 "assets/assets/102withoutEAPS.jpg",             
 "index.html",
