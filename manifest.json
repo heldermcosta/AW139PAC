@@ -7,50 +7,32 @@
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
     "description": "AW139 helicopter Power Assurance Calculator",
-    "orientation": "portrait-primary",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {
-            "purpose": "maskable",
-            "sizes": "48x48",
-            "src": "icons/maskable_icon_x48.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
-            "sizes": "72x72",
-            "src": "icons/maskable_icon_x72.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
-            "sizes": "96x96",
-            "src": "icons/maskable_icon_x96.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
-            "sizes": "128x128",
-            "src": "icons/maskable_icon_x128.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
+            "src": "icons/Icon-192.png",
             "sizes": "192x192",
-            "src": "icons/maskable_icon_x192.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
-            "sizes": "384x384",
-            "src": "icons/maskable_icon_x384.png",
-            "type": "image/png"
-          },
-          {
-            "purpose": "maskable",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/Icon-512.png",
             "sizes": "512x512",
-            "src": "icons/maskable_icon_x512.png",
-            "type": "image/png"
-          }
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
     ]
 }
