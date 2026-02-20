@@ -44,7 +44,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "favicon.png": "123f7d0a88f3b4e0fbfd60b03fd6f79c",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "cc19e11155c93851123ddb53ea5b83a8",
+"flutter_bootstrap.js": "164990293c83527c27d10d589c4d875e",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
@@ -58,9 +58,9 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "icons/maskable_icon_x96.png": "12d39a71ab033765dad580a6b1fe0e49",
 "index.html": "f04ead92d756632555dcb106d4eaa643",
 "/": "f04ead92d756632555dcb106d4eaa643",
-"main.dart.js": "b79fbe22f2cc20962c5ae16318d13192",
+"main.dart.js": "dd76d5f163b9f797e06a9221f9387b3f",
 "main.dart.mjs": "445215a3fccd785c5062b1b08cea3a86",
-"main.dart.wasm": "662295b4e9ec739060a91e6cd7c171ef",
+"main.dart.wasm": "eb4085933b4c2e6f47894e4077889cd3",
 "manifest.json": "73c33b3564f64c31681775376f8785df",
 "version.json": "edbe3d570bf3a6e812d256a905e5c2d3"};
 // The application shell files that are downloaded before a service worker can
@@ -152,21 +152,20 @@ self.addEventListener("fetch", (event) => {
   var origin = self.location.origin;
   var key = event.request.url.substring(origin.length + 1);
 
-
-
-// remove query params
+  // Redirect URLs to the index.html
+  
+  // ✅ remove TODOS os query params
 if (key.indexOf('?') !== -1) {
   key = key.split('?')[0];
 }
 
-// remove leading slash
+// ✅ remove slash inicial
 if (key.startsWith('/')) {
   key = key.substring(1);
 }
-
-
-
-  // Redirect URLs to the index.html
+  
+  
+  
   if (key.indexOf('?v=') != -1) {
     key = key.split('?v=')[0];
   }
