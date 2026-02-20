@@ -44,7 +44,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "favicon.png": "123f7d0a88f3b4e0fbfd60b03fd6f79c",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "a79a25244d2089c6da28816cdbbff435",
+"flutter_bootstrap.js": "72bd4e739b695de1f2df279d7998b7e8",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
@@ -148,6 +148,9 @@ self.addEventListener("fetch", (event) => {
   var origin = self.location.origin;
   var key = event.request.url.substring(origin.length + 1);
   // Redirect URLs to the index.html
+
+
+
   if (key.indexOf('?v=') != -1) {
     key = key.split('?v=')[0];
   }
@@ -168,12 +171,14 @@ self.addEventListener("fetch", (event) => {
       return cache.match(event.request).then((response) => {
         // Either respond with the cached resource, or perform a fetch and
         // lazily populate the cache only if the resource was successfully fetched.
-        return response || fetch(event.request).then((response) => {
-          if (response && Boolean(response.ok)) {
-            cache.put(event.request, response.clone());
-          }
-          return response;
-        });
+        return response || fetch(event.request).then((networkResponse) => {
+  if (networkResponse && networkResponse.ok) {
+    cache.put(event.request, networkResponse.clone());
+  }
+  return networkResponse;
+}).catch(() => {
+  return response;
+});
       })
     })
   );
