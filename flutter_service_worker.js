@@ -44,7 +44,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "favicon.png": "123f7d0a88f3b4e0fbfd60b03fd6f79c",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "5f3b80afebf79000f9729d1dcc20719c",
+"flutter_bootstrap.js": "26a1a213cde71e3cfc034a2a262841e2",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
@@ -56,9 +56,9 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "icons/maskable_icon_x512.png": "fb872e0a35cc5d1ea5bf3fd38997fa4f",
 "icons/maskable_icon_x72.png": "be66a9649fa714c500dc543b5c146c83",
 "icons/maskable_icon_x96.png": "12d39a71ab033765dad580a6b1fe0e49",
-"index.html": "f04ead92d756632555dcb106d4eaa643",
-"/": "f04ead92d756632555dcb106d4eaa643",
-"main.dart.js": "1457ef41a1d8de616358235acfcb9534",
+"index.html": "912c6ef316a2e78497a918fddb368328",
+"/": "912c6ef316a2e78497a918fddb368328",
+"main.dart.js": "f14df4ce4ecf7c04485fd7a0a31360c8",
 "manifest.json": "73c33b3564f64c31681775376f8785df",
 "version.json": "edbe3d570bf3a6e812d256a905e5c2d3"};
 // The application shell files that are downloaded before a service worker can
@@ -148,9 +148,6 @@ self.addEventListener("fetch", (event) => {
   var origin = self.location.origin;
   var key = event.request.url.substring(origin.length + 1);
   // Redirect URLs to the index.html
-
-
-
   if (key.indexOf('?v=') != -1) {
     key = key.split('?v=')[0];
   }
@@ -171,14 +168,12 @@ self.addEventListener("fetch", (event) => {
       return cache.match(event.request).then((response) => {
         // Either respond with the cached resource, or perform a fetch and
         // lazily populate the cache only if the resource was successfully fetched.
-      return response || fetch(event.request).then((networkResponse) => {
-  if (networkResponse && networkResponse.ok) {
-    cache.put(event.request, networkResponse.clone());
-  }
-  return networkResponse;
-}).catch(() => {
-  return response;
-});
+        return response || fetch(event.request).then((response) => {
+          if (response && Boolean(response.ok)) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        });
       })
     })
   );
