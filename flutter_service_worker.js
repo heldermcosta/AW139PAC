@@ -3,9 +3,9 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595",
-"assets/AssetManifest.bin.json": "5753745a070f658179a1156256ddb8bf",
-"assets/AssetManifest.json": "f700441807baf0b5509cace04a7dd2b8",
+const RESOURCES = {"assets/AssetManifest.bin": "1ea5ecc66d9055eac193eac93be033f8",
+"assets/AssetManifest.bin.json": "a7a76f1ae1e86c0dd7bfcebafdb9003d",
+"assets/AssetManifest.json": "92875c3c82346f4b31772099b5fedb1d",
 "assets/assets/100withEAPS.jpg": "165f525f6f640ebe1484399852464665",
 "assets/assets/100withEAPS.svg": "20361de8bc6b7b8e98b9b106a52f934f",
 "assets/assets/100withIBF.jpg": "48a9b72044b02e2ad19a172565bdf36b",
@@ -20,13 +20,20 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "assets/assets/102withoutEAPS.svg": "0f036b642a5db4a7d3cb9b29b043ebbf",
 "assets/assets/aw139_pwr_ass_icon.png": "123f7d0a88f3b4e0fbfd60b03fd6f79c",
 "assets/assets/aw139_pwr_ass_icon.svg": "acd2d1ca3bd12063a4cce1141d40be45",
+"assets/assets/BleedValveGraph.png": "45ee9608ef770f506413ba3113ae04d5",
 "assets/assets/graphData.json": "606cf763cdcbca4ff4d9dbab18276ebf",
 "assets/assets/HeightLossFlyawayUpTo6400Kg.jpg": "5d6af567d2a4c1a1e8a1c0b909d1b759",
 "assets/assets/IBF%2520100.tar": "1c228ca81b764f8e2ec9b2e9f7a55312",
 "assets/assets/IBF%2520102.tar": "9b5b2277c4867562774ccb344d396204",
 "assets/assets/performanceTables.json": "2cb27b1bda46bee98a011d8933fcc89c",
+"assets/assets/s50-63.jpg": "8d7c306c80887d3a78e38846ae2cf112",
+"assets/assets/s50-63.json": "ae11bd7eb0004d1776781a029660acc1",
+"assets/assets/s50-63_chartBounds.json": "3a39dba3ad6ff427f7a40fd57d571e5b",
+"assets/assets/s69-63.jpg": "1e9c7f7bb13efe425295c7a65b28a7dd",
+"assets/assets/s69-63.json": "4df4133cae4a80be52eb0af57a5b927d",
+"assets/assets/s69-63_chartBounds.json": "8f49335eebaf00c17d7f6309f60b1668",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
-"assets/fonts/MaterialIcons-Regular.otf": "41a628f02f67e499d0c2fbab87442b38",
+"assets/fonts/MaterialIcons-Regular.otf": "ed84ce9f17e257a90b4682ff9966e2c1",
 "assets/NOTICES": "740e3ca5fd75fac9384d65c6c29787b6",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "33b7d9392238c04c131b6ce224e13711",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
@@ -44,7 +51,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "favicon.png": "123f7d0a88f3b4e0fbfd60b03fd6f79c",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
-"flutter_bootstrap.js": "f851bc2194ef9bc073c90f757fe97390",
+"flutter_bootstrap.js": "9d4bd89c634b1235e46c5427439eb24b",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
@@ -58,7 +65,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "c6b210a77d0f9f937b62d27aba248595
 "icons/maskable_icon_x96.png": "12d39a71ab033765dad580a6b1fe0e49",
 "index.html": "f04ead92d756632555dcb106d4eaa643",
 "/": "f04ead92d756632555dcb106d4eaa643",
-"main.dart.js": "3a44fba9877b4ae34dd00395ef3fb4a7",
+"main.dart.js": "3569aa23cc18ab244992e6d4607ef5a8",
 "manifest.json": "73c33b3564f64c31681775376f8785df",
 "version.json": "edbe3d570bf3a6e812d256a905e5c2d3"};
 // The application shell files that are downloaded before a service worker can
@@ -148,7 +155,6 @@ self.addEventListener("fetch", (event) => {
   var origin = self.location.origin;
   var key = event.request.url.substring(origin.length + 1);
   // Redirect URLs to the index.html
-  
   if (key.indexOf('?v=') != -1) {
     key = key.split('?v=')[0];
   }
@@ -169,14 +175,12 @@ self.addEventListener("fetch", (event) => {
       return cache.match(event.request).then((response) => {
         // Either respond with the cached resource, or perform a fetch and
         // lazily populate the cache only if the resource was successfully fetched.
-        return response || fetch(event.request).then((networkResponse) => {
-  if (networkResponse && networkResponse.ok) {
-    cache.put(event.request, networkResponse.clone());
-  }
-  return networkResponse;
-}).catch(() => {
-  return response;
-});
+        return response || fetch(event.request).then((response) => {
+          if (response && Boolean(response.ok)) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        });
       })
     })
   );
