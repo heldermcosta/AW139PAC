@@ -52,6 +52,15 @@
         navigator.serviceWorker.register('sw.js');
       });
     }
+
+    // Fix: Android Chrome reclaims the WebGL context when the PWA is backgrounded,
+    // causing a black screen on return. Dispatching a resize event forces
+    // Flutter/CanvasKit to re-acquire the context and redraw the canvas.
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') {
+        window.dispatchEvent(new Event('resize'));
+      }
+    });
   </script>
 </body>
 </html>
