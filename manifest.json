@@ -1,12 +1,12 @@
 {
-    "name": "AW139 Power Assurance Calculator",
+    "name": "AW139 Tools",
     "short_name": "AW139PAC",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "AW139 helicopter Power Assurance Calculator",
+    "description": "AW139 Tools",
     "orientation": "any",
     "prefer_related_applications": false,
     "icons": [

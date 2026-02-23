@@ -46,6 +46,17 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
-  
+  <!-- After app loads, tell the service worker to pre-cache all remaining resources -->
+  <script>
+    window.addEventListener('load', function () {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(function (reg) {
+          setTimeout(function () {
+            if (reg.active) reg.active.postMessage('downloadOffline');
+          }, 5000);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
