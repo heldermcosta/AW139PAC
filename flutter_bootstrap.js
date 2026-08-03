@@ -34,4 +34,12 @@ if (!window._flutter) {
 }
 _flutter.buildConfig = {"engineRevision":"e4b8dca3f1b4ede4c30371002441c88c12187ed6","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"},{}]};
 
-_flutter.loader.load();
+_flutter.loader.load({
+  config: {
+    // Without this, the loader defaults to fetching CanvasKit from
+    // https://www.gstatic.com/flutter-canvaskit/... — an external CDN
+    // dependency that breaks first-load rendering when offline. Force it
+    // to use the CanvasKit build already bundled in web/canvaskit/ instead.
+    canvasKitBaseUrl: "canvaskit/",
+  },
+});
