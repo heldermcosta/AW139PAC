@@ -92,8 +92,40 @@
   <script src="flutter_bootstrap.js" async></script>
   <script>
     if ('serviceWorker' in navigator) {
+      // sw.js serves everything cache-first, so once installed it never
+      // checks the network for a newer version on its own — an installed
+      // PWA in particular can go a long time without the browser's own
+      // lazy ~24h update check ever firing. This makes the page actively
+      // check for (and switch to) a new version instead of relying on
+      // users to know they need to force-close and reopen the app.
+      //
+      // Was this page already being served by an earlier service worker
+      // when it loaded? If so, a LATER controllerchange means a genuine
+      // update just took over — reload once to pick it up. If not (first
+      // -ever install, no previous controller), the initial claim isn't
+      // an update to react to, so this only reloads for RETURNING users.
+      var hadController = !!navigator.serviceWorker.controller;
+      var reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadController || reloaded) {
+          hadController = true;
+          return;
+        }
+        reloaded = true;
+        window.location.reload();
+      });
+
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js');
+        navigator.serviceWorker.register('sw.js').then(function (reg) {
+          // Force an immediate check for a new sw.js on the server rather
+          // than waiting on the browser's own schedule — and again
+          // whenever the app becomes visible, which covers reopening an
+          // installed PWA from the home screen or app switcher.
+          reg.update();
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') reg.update();
+          });
+        });
       });
     }
 

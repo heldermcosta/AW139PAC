@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 // Version changes on every build â€” forces old caches to be replaced.
-const CACHE = 'aw139pac-20260830103106';
+const CACHE = 'aw139pac-20260830113914';
 
 // Every file in the build is listed here so the service worker
 // can pre-cache all of them during install, enabling offline use
