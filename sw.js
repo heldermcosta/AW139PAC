@@ -1,79 +1,140 @@
-'use strict';
+﻿'use strict';
 
-const CACHE = 'aw139pac-v2';
+// Version changes on every build â€” forces old caches to be replaced.
+const CACHE = 'aw139pac-20260830103106';
 
-// Core shell — pre-cached immediately on install so the app can launch,
-// render, and use every tool even on a device that has never been online
-// with this app before (first-run offline).
-//
-// NOTE: this list is manually maintained. If assets/ gains or loses files,
-// or the Flutter/CanvasKit version changes, update the relevant section
-// below (paths are checked by hand against a `flutter build web` output).
-const SHELL = [
-  './',
-  'flutter.js',
-  'flutter_bootstrap.js',
-  'main.dart.js',
-  'manifest.json',
-  'favicon.png',
-  'version.json',
-
-  // CanvasKit renderer — required to render anything at all. Bundled
-  // locally (see web/flutter_bootstrap.js, canvasKitBaseUrl) instead of
-  // fetched from Google's CDN, specifically so it can be precached here.
-  'canvaskit/canvaskit.js',
-  'canvaskit/canvaskit.wasm',
-  'canvaskit/chromium/canvaskit.js',
-  'canvaskit/chromium/canvaskit.wasm',
-
-  // Flutter engine manifests — needed at startup to know what assets/fonts exist.
-  'assets/AssetManifest.bin',
-  'assets/AssetManifest.bin.json',
-  'assets/FontManifest.json',
-
-  // Fonts — Material icons are used throughout the whole UI.
-  'assets/fonts/MaterialIcons-Regular.otf',
-  'assets/packages/cupertino_icons/assets/CupertinoIcons.ttf',
-
-  // Shaders — Material ripple/stretch effects.
-  'assets/shaders/ink_sparkle.frag',
-  'assets/shaders/stretch_effect.frag',
-
-  // App assets (declared in pubspec.yaml under `assets: - assets/`).
-  'assets/assets/100withEAPS.jpg',
-  'assets/assets/100withIBF.jpg',
-  'assets/assets/100withoutEAPS.jpg',
-  'assets/assets/102withEAPS.jpg',
-  'assets/assets/102withIBF.jpg',
-  'assets/assets/102withoutEAPS.jpg',
-  'assets/assets/BleedValveGraph.jpg',
-  'assets/assets/BleedValveGraph.png',
-  'assets/assets/S97-35.jpg',
-  'assets/assets/aw139_pwr_ass_icon.png',
-  'assets/assets/path163-4.jpg',
-  'assets/assets/performanceTables.json',
-  'assets/assets/s-97-35.svg',
-  'assets/assets/s50-63.jpg',
-  'assets/assets/s50-63.json',
-  'assets/assets/s50-63_chartBounds.json',
-  'assets/assets/s69-63.jpg',
-  'assets/assets/s69-63.json',
-  'assets/assets/s69-63_chartBounds.json',
-  'assets/assets/s97-35.json',
-  'assets/assets/s97-35_chartBounds.json',
+// Every file in the build is listed here so the service worker
+// can pre-cache all of them during install, enabling offline use
+// immediately after the first online load.
+const PRECACHE = [
+  './.last_build_id',
+  './favicon.png',
+  './flutter.js',
+  './flutter_bootstrap.js',
+  './flutter_service_worker.js',
+  './index.html',
+  './main.dart.js',
+  './manifest.json',
+  './version.json',
+  './assets/AssetManifest.bin',
+  './assets/AssetManifest.bin.json',
+  './assets/FontManifest.json',
+  './assets/NOTICES',
+  './assets/assets/100withEAPS.jpg',
+  './assets/assets/100withIBF.jpg',
+  './assets/assets/100withoutEAPS.jpg',
+  './assets/assets/102withEAPS.jpg',
+  './assets/assets/102withIBF.jpg',
+  './assets/assets/102withoutEAPS.jpg',
+  './assets/assets/aw139_pwr_ass_icon.png',
+  './assets/assets/BleedValveGraph.jpg',
+  './assets/assets/BleedValveGraph.png',
+  './assets/assets/path163-4.jpg',
+  './assets/assets/performanceTables.json',
+  './assets/assets/s-97-35.svg',
+  './assets/assets/s50-63.jpg',
+  './assets/assets/s50-63.json',
+  './assets/assets/s50-63_chartBounds.json',
+  './assets/assets/s69-63.jpg',
+  './assets/assets/s69-63.json',
+  './assets/assets/s69-63_chartBounds.json',
+  './assets/assets/S97-35.jpg',
+  './assets/assets/s97-35.json',
+  './assets/assets/s97-35_chartBounds.json',
+  './assets/assets/hover_ceiling/HC_4-20_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A.svg',
+  './assets/assets/hover_ceiling/HC_4-21_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A.svg',
+  './assets/assets/hover_ceiling/HC_4-22_IGE_2.5%20min_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A.svg',
+  './assets/assets/hover_ceiling/HC_4-23_IGE_MCP_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A.svg',
+  './assets/assets/hover_ceiling/HC_4-24_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A.svg',
+  './assets/assets/hover_ceiling/HC_4-25_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A.svg',
+  './assets/assets/hover_ceiling/HC_4-26_OGE_2.5%20min_OEI_100_zero%20wind_electrical%20load%20300A.svg',
+  './assets/assets/hover_ceiling/HC_4-27_OGE_MCP_OEI_100_zero%20wind_electrical%20load%20300A.svg',
+  './assets/assets/hover_ceiling/HC_4-68_OGE_2.5%20min_OEI_102_headwind%20factored_electrical%20load%20300A_clean%20configuration_Heater%20off.svg',
+  './assets/assets/hover_ceiling/HC_4-69_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_clean%20configuration_Heater%20off.svg',
+  './assets/assets/hover_ceiling/HC_9-126_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_Clean%20Intake.svg',
+  './assets/assets/hover_ceiling/HC_9-127_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_9-131_OGE_TOP_AEO_102_zero%20wind_electrical%20load%20600A_Clean%20Intake.svg',
+  './assets/assets/hover_ceiling/HC_9-132_OGE_MCP_AEO_102_zero%20wind_electrical%20load%20600A_Clean%20Intake.svg',
+  './assets/assets/hover_ceiling/HC_9-133_OGE_TOP_AEO_102_zero%20wind_electrical%20load%20600A_Clean%20Intake_weight%20up%20to%206800kg.svg',
+  './assets/assets/hover_ceiling/HC_9-134_OGE_MCP_AEO_102_zero%20wind_electrical%20load%20600A_Clean%20Intake_weight%20up%20to%206800kg.svg',
+  './assets/assets/hover_ceiling/HC_S5-110_OGE_2.5%20min_OEI_102_headwind%20factored_electrical%20load%20300A_EAPS%20OFF_Heater%20off.svg',
+  './assets/assets/hover_ceiling/HC_S5-111_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_EAPS%20OFF_Heater%20off.svg',
+  './assets/assets/hover_ceiling/HC_S5-27_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-28_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-29_IGE_2.5%20min_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-30_IGE_MCP_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-31_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-32_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-33_OGE_2.5%20min_OEI_100_zero%20wind_electrical%20load%20300A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-34_OGE_MCP_OEI_100_zero%20wind_electrical%20load%20300A_EAPS%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S5-35_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-36_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-37_IGE_2.5%20min_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-38_IGE_MCP_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-39_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-40_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-41_OGE_2.5%20min_OEI_100_zero%20wind_electrical%20load%20300A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-42_OGE_MCP_OEI_100_zero%20wind_electrical%20load%20300A_EAPS%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-43_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20OFF%20or%20ON_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-44_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_EAPS%20OFF%20or%20ON_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-45_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20OFF%20or%20ON_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S5-46_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_EAPS%20OFF%20or%20ON_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S86-18_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-19_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-20_IGE_2.5%20min_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-21_IGE_MCP_OEI_100_zero%20wind_wheel%20height%205ft_electrical%20load%20300A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-22_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-23_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-24_OGE_2.5%20min_OEI_100_zero%20wind_electrical%20load%20300A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-25_OGE_MCP_OEI_100_zero%20wind_electrical%20load%20300A_IBF.svg',
+  './assets/assets/hover_ceiling/HC_S86-26_IGE_TOP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_IBF_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S86-27_IGE_MCP_AEO_100_zero%20wind_wheel%20height%205ft_electrical%20load%20600A_IBF_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S86-28_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_IBF_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S86-29_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_IBF_Heater%20ON.svg',
+  './assets/assets/hover_ceiling/HC_S86-30_OGE_2.5%20min_OEI_102_headwind%20factored_electrical%20load%20300A_IBF_Heater%20OFF.svg',
+  './assets/assets/hover_ceiling/HC_S86-31_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_IBF_Heater%20OFF.svg',
+  './assets/fonts/MaterialIcons-Regular.otf',
+  './assets/packages/cupertino_icons/assets/CupertinoIcons.ttf',
+  './assets/shaders/ink_sparkle.frag',
+  './assets/shaders/stretch_effect.frag',
+  './canvaskit/canvaskit.js',
+  './canvaskit/canvaskit.js.symbols',
+  './canvaskit/canvaskit.wasm',
+  './canvaskit/skwasm.js',
+  './canvaskit/skwasm.js.symbols',
+  './canvaskit/skwasm.wasm',
+  './canvaskit/skwasm_heavy.js',
+  './canvaskit/skwasm_heavy.js.symbols',
+  './canvaskit/skwasm_heavy.wasm',
+  './canvaskit/wimp.js',
+  './canvaskit/wimp.js.symbols',
+  './canvaskit/wimp.wasm',
+  './canvaskit/chromium/canvaskit.js',
+  './canvaskit/chromium/canvaskit.js.symbols',
+  './canvaskit/chromium/canvaskit.wasm',
+  './icons/Icon-192.png',
+  './icons/Icon-512.png',
+  './icons/Icon-maskable-192.png',
+  './icons/Icon-maskable-512.png',
+  './icons/maskable_icon_x128.png',
+  './icons/maskable_icon_x192.png',
+  './icons/maskable_icon_x384.png',
+  './icons/maskable_icon_x48.png',
+  './icons/maskable_icon_x512.png',
+  './icons/maskable_icon_x72.png',
+  './icons/maskable_icon_x96.png'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE).then((cache) =>
-      // Cache each file independently rather than cache.addAll(), so one
-      // missing/renamed file can't abort precaching of everything else.
-      Promise.all(
-        SHELL.map((url) =>
-          cache.add(url).catch((err) => {
-            console.warn('[sw] failed to precache', url, err);
-          })
+      // Cache files individually â€” one failure won't abort the whole install.
+      Promise.allSettled(
+        PRECACHE.map((url) =>
+          cache.add(url).catch((err) =>
+            console.warn('[sw] failed to cache:', url, err)
+          )
         )
       )
     )
@@ -81,25 +142,24 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Remove any old caches from previous versions.
+  // Delete any caches from previous builds.
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))
+    caches.keys()
+      .then((keys) =>
+        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
       )
-    ).then(() => self.clients.claim())
+      .then(() => self.clients.claim())
   );
 });
 
-// Network-first, cache fallback.
-// Online: always fetch fresh content and update the cache silently.
-// Offline: serve whatever was cached on the last online visit.
+// Cache-first: serve instantly from cache; fall back to network for
+// anything not yet cached (e.g. weather API, analytics).
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
+    caches.match(event.request).then((cached) =>
+      cached ||
+      fetch(event.request).then((response) => {
         if (response.ok) {
           caches.open(CACHE).then((cache) =>
             cache.put(event.request, response.clone())
@@ -107,6 +167,6 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(event.request))
+    )
   );
 });
