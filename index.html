@@ -34,6 +34,54 @@
   <link rel="manifest" href="manifest.json">
   <!-- Umami analytics — replace src and data-website-id with your instance values -->
   <script defer src="https://docs.mega.noho.st/script.js" data-website-id="9a00f78a-2698-4e28-8901-ee83bfeb8485"></script>
+  <script>
+    // Captured as early as possible — 'beforeinstallprompt' can fire before
+    // Flutter's engine has even finished downloading, and it must be
+    // preventDefault()-ed synchronously to stash it for a later, deliberate
+    // button tap instead of letting the browser show its own mini-infobar.
+    // Only Chromium-based browsers (Chrome, Edge, Samsung Internet, Android
+    // WebView) fire this at all — iOS Safari has no such API, so there's no
+    // way to prompt an install there; users add to Home Screen manually via
+    // the Share sheet.
+    window.__aw139InstallPrompt = null;
+
+    function aw139NotifyInstallable() {
+      window.dispatchEvent(new CustomEvent('aw139-installable-changed', {
+        detail: { canInstall: !!window.__aw139InstallPrompt }
+      }));
+    }
+
+    window.addEventListener('beforeinstallprompt', function (event) {
+      // Already running installed (e.g. relaunched from home screen) —
+      // nothing to offer.
+      if (window.matchMedia('(display-mode: standalone)').matches) return;
+      event.preventDefault();
+      window.__aw139InstallPrompt = event;
+      aw139NotifyInstallable();
+    });
+
+    window.addEventListener('appinstalled', function () {
+      window.__aw139InstallPrompt = null;
+      aw139NotifyInstallable();
+    });
+
+    // Returns a Promise<bool> — true if the user accepted the install.
+    // Resolves false immediately if there's no stashed prompt to use.
+    window.aw139Install = function () {
+      var promptEvent = window.__aw139InstallPrompt;
+      if (!promptEvent) return Promise.resolve(false);
+      window.__aw139InstallPrompt = null;
+      aw139NotifyInstallable();
+      return promptEvent.prompt()
+        .then(function () { return promptEvent.userChoice; })
+        .then(function (choice) { return choice.outcome === 'accepted'; })
+        .catch(function () { return false; });
+    };
+
+    window.aw139CanInstall = function () {
+      return !!window.__aw139InstallPrompt;
+    };
+  </script>
 </head>
 <body>
   <!-- Shown the instant the page loads, before Flutter's engine/bundle has

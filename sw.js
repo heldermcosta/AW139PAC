@@ -1,11 +1,12 @@
 ﻿'use strict';
 
 // Version changes on every build â€” forces old caches to be replaced.
-const CACHE = 'aw139pac-20260831101137';
+const CACHE = 'aw139pac-20260901182348';
 
-// Every file in the build is listed here so the service worker
-// can pre-cache all of them during install, enabling offline use
-// immediately after the first online load.
+// Eagerly pre-cached on install â€” the app shell only, so the menu shows as
+// fast as possible. Everything else is either filled in slowly afterward
+// (BACKGROUND, below) or left purely on-demand via the fetch handler
+// (CanvasKit's renderer variants â€” only one of the 5 is ever actually used).
 const PRECACHE = [
   './.last_build_id',
   './favicon.png',
@@ -19,7 +20,27 @@ const PRECACHE = [
   './assets/AssetManifest.bin',
   './assets/AssetManifest.bin.json',
   './assets/FontManifest.json',
-  './assets/NOTICES',
+  './assets/fonts/MaterialIcons-Regular.otf',
+  './assets/packages/cupertino_icons/assets/CupertinoIcons.ttf',
+  './assets/shaders/ink_sparkle.frag',
+  './assets/shaders/stretch_effect.frag',
+  './icons/Icon-192.png',
+  './icons/Icon-512.png',
+  './icons/Icon-maskable-192.png',
+  './icons/Icon-maskable-512.png',
+  './icons/maskable_icon_x128.png',
+  './icons/maskable_icon_x192.png',
+  './icons/maskable_icon_x384.png',
+  './icons/maskable_icon_x48.png',
+  './icons/maskable_icon_x512.png',
+  './icons/maskable_icon_x72.png',
+  './icons/maskable_icon_x96.png'
+];
+
+// Not needed for first paint â€” filled in one file at a time by
+// backgroundPrecache() below, well after the shell is ready, so it never
+// competes with (or delays) whatever the user is actively using right now.
+const BACKGROUND = [
   './assets/assets/100withEAPS.jpg',
   './assets/assets/100withIBF.jpg',
   './assets/assets/100withoutEAPS.jpg',
@@ -92,37 +113,7 @@ const PRECACHE = [
   './assets/assets/hover_ceiling/HC_S86-28_OGE_TOP_AEO_100_zero%20wind_electrical%20load%20600A_IBF_Heater%20ON.svg',
   './assets/assets/hover_ceiling/HC_S86-29_OGE_MCP_AEO_100_zero%20wind_electrical%20load%20600A_IBF_Heater%20ON.svg',
   './assets/assets/hover_ceiling/HC_S86-30_OGE_2.5%20min_OEI_102_headwind%20factored_electrical%20load%20300A_IBF_Heater%20OFF.svg',
-  './assets/assets/hover_ceiling/HC_S86-31_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_IBF_Heater%20OFF.svg',
-  './assets/fonts/MaterialIcons-Regular.otf',
-  './assets/packages/cupertino_icons/assets/CupertinoIcons.ttf',
-  './assets/shaders/ink_sparkle.frag',
-  './assets/shaders/stretch_effect.frag',
-  './canvaskit/canvaskit.js',
-  './canvaskit/canvaskit.js.symbols',
-  './canvaskit/canvaskit.wasm',
-  './canvaskit/skwasm.js',
-  './canvaskit/skwasm.js.symbols',
-  './canvaskit/skwasm.wasm',
-  './canvaskit/skwasm_heavy.js',
-  './canvaskit/skwasm_heavy.js.symbols',
-  './canvaskit/skwasm_heavy.wasm',
-  './canvaskit/wimp.js',
-  './canvaskit/wimp.js.symbols',
-  './canvaskit/wimp.wasm',
-  './canvaskit/chromium/canvaskit.js',
-  './canvaskit/chromium/canvaskit.js.symbols',
-  './canvaskit/chromium/canvaskit.wasm',
-  './icons/Icon-192.png',
-  './icons/Icon-512.png',
-  './icons/Icon-maskable-192.png',
-  './icons/Icon-maskable-512.png',
-  './icons/maskable_icon_x128.png',
-  './icons/maskable_icon_x192.png',
-  './icons/maskable_icon_x384.png',
-  './icons/maskable_icon_x48.png',
-  './icons/maskable_icon_x512.png',
-  './icons/maskable_icon_x72.png',
-  './icons/maskable_icon_x96.png'
+  './assets/assets/hover_ceiling/HC_S86-31_OGE_2.5%20min_OEI_102_headwind%20unfactored_electrical%20load%20300A_IBF_Heater%20OFF.svg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -150,10 +141,33 @@ self.addEventListener('activate', (event) => {
       )
       .then(() => self.clients.claim())
   );
+  // A SEPARATE waitUntil() extension, not chained to the one above â€” it
+  // keeps this worker alive for as long as the background sweep takes
+  // WITHOUT delaying activation/claim, which still resolves on its own as
+  // soon as the cache cleanup above finishes. Without this, the browser is
+  // free to suspend the worker the instant it's otherwise idle, so the
+  // sweep would only ever progress piggybacking on the browser keeping it
+  // alive for the user's OWN fetches (i.e. only while actively clicking
+  // into tools) instead of running on its own in the background.
+  event.waitUntil(backgroundPrecache());
 });
 
+async function backgroundPrecache() {
+  const cache = await caches.open(CACHE);
+  for (const url of BACKGROUND) {
+    try {
+      // Already cached (the user opened it themselves, or a previous sweep
+      // got this far already) â€” skip straight to the next one.
+      if (await cache.match(url)) continue;
+      await cache.add(url);
+    } catch (err) {
+      console.warn('[sw] background cache failed:', url, err);
+    }
+  }
+}
+
 // Cache-first: serve instantly from cache; fall back to network for
-// anything not yet cached (e.g. weather API, analytics).
+// anything not yet cached (e.g. weather API, analytics, CanvasKit).
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
