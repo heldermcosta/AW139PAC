@@ -1,12 +1,7 @@
 ﻿'use strict';
 
-// Version changes on every build â€” forces old caches to be replaced.
-const CACHE = 'aw139pac-20260901182348';
+const CACHE = 'aw139pac-20260929173954';
 
-// Eagerly pre-cached on install â€” the app shell only, so the menu shows as
-// fast as possible. Everything else is either filled in slowly afterward
-// (BACKGROUND, below) or left purely on-demand via the fetch handler
-// (CanvasKit's renderer variants â€” only one of the 5 is ever actually used).
 const PRECACHE = [
   './.last_build_id',
   './favicon.png',
@@ -37,9 +32,6 @@ const PRECACHE = [
   './icons/maskable_icon_x96.png'
 ];
 
-// Not needed for first paint â€” filled in one file at a time by
-// backgroundPrecache() below, well after the shell is ready, so it never
-// competes with (or delays) whatever the user is actively using right now.
 const BACKGROUND = [
   './assets/assets/100withEAPS.jpg',
   './assets/assets/100withIBF.jpg',
@@ -120,7 +112,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE).then((cache) =>
-      // Cache files individually â€” one failure won't abort the whole install.
       Promise.allSettled(
         PRECACHE.map((url) =>
           cache.add(url).catch((err) =>
@@ -133,7 +124,6 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Delete any caches from previous builds.
   event.waitUntil(
     caches.keys()
       .then((keys) =>
@@ -141,14 +131,6 @@ self.addEventListener('activate', (event) => {
       )
       .then(() => self.clients.claim())
   );
-  // A SEPARATE waitUntil() extension, not chained to the one above â€” it
-  // keeps this worker alive for as long as the background sweep takes
-  // WITHOUT delaying activation/claim, which still resolves on its own as
-  // soon as the cache cleanup above finishes. Without this, the browser is
-  // free to suspend the worker the instant it's otherwise idle, so the
-  // sweep would only ever progress piggybacking on the browser keeping it
-  // alive for the user's OWN fetches (i.e. only while actively clicking
-  // into tools) instead of running on its own in the background.
   event.waitUntil(backgroundPrecache());
 });
 
@@ -156,8 +138,6 @@ async function backgroundPrecache() {
   const cache = await caches.open(CACHE);
   for (const url of BACKGROUND) {
     try {
-      // Already cached (the user opened it themselves, or a previous sweep
-      // got this far already) â€” skip straight to the next one.
       if (await cache.match(url)) continue;
       await cache.add(url);
     } catch (err) {
@@ -166,8 +146,6 @@ async function backgroundPrecache() {
   }
 }
 
-// Cache-first: serve instantly from cache; fall back to network for
-// anything not yet cached (e.g. weather API, analytics, CanvasKit).
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
