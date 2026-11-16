@@ -913,7 +913,7 @@
      aria-label="  " />
   <path
      id="path201"
-     d="M 229.76001,785.89484 222.72,756.77485 222.23999,754.05488 172.48001,698.21485 154.24,677.09485"
+     d="M 229.76001,785.89484 222.72,756.77485 222.23999,754.05488 172.48001,698.21485 154.24,677.09485 M 249.44,873.73487 l -6.56,-29.28003 -6.72,-29.27997 -6.39999,-29.28003"
      style="fill:none;stroke:#000000;stroke-width:1.28;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
      inkscape:label="0 oat" />
   <path
@@ -922,7 +922,7 @@
      style="fill:none;stroke:#000000;stroke-width:1.28;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" />
   <path
      id="path203"
-     d="m 236.16,844.45484 -6.39999,-29.27997 -3.20002,-13.92004 -13.44,-15.35999 -51.51999,-58.39996 -7.36,-8.48004"
+     d="m 236.16,844.45484 -6.39999,-29.27997 -3.20002,-13.92004 -13.44,-15.35999 -51.51999,-58.39996 -7.36,-8.48004 M 242.88,873.73487 l -6.72,-29.28003"
      style="fill:none;stroke:#000000;stroke-width:1.28;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
      inkscape:label="10 oat" />
   <path

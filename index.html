@@ -24,13 +24,13 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="AW139PAC">
+  <meta name="apple-mobile-web-app-title" content="AW139 Tools">
   <link rel="apple-touch-icon" href="icons/maskable_icon_x192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>AW139 Power Assurance Calculator</title>
+  <title>AW139 Tools</title>
   <link rel="manifest" href="manifest.json">
   <!-- Umami analytics — replace src and data-website-id with your instance values -->
   <script defer src="https://docs.mega.noho.st/script.js" data-website-id="9a00f78a-2698-4e28-8901-ee83bfeb8485"></script>
@@ -90,45 +90,123 @@
        'flutter-first-frame', the event Flutter's web engine dispatches on
        window once it actually renders its first real frame. -->
   <style>
+    /* A skeleton of the home screen, laid out as the home screen is (app
+       bar with its title and version, the disclaimer, then the tool cards in
+       a column for each section, or one below the other on a narrow screen)
+       instead of a spinner: the page already has its shape while the engine
+       downloads. */
     #app-loading {
       position: fixed;
       inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      background: #ffffff;
+      background: #f8f9fd;
+      color: #1b1b1f;
       z-index: 9999;
+      overflow: hidden;
+      font-family: Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --sk-base: #e3e8ee;
+      --sk-light: #f1f4f8;
     }
-    #app-loading .spinner {
-      width: 44px;
-      height: 44px;
-      border: 5px solid #dbe4ee;
-      border-top-color: #1565c0;
-      border-radius: 50%;
-      animation: app-loading-spin 0.8s linear infinite;
+    @media (prefers-color-scheme: dark) {
+      #app-loading { background: #121417; color: #e3e3e8; --sk-base: #23272d; --sk-light: #323840; }
     }
-    #app-loading span {
-      font-family: sans-serif;
-      font-size: 14px;
-      color: #5f6b7a;
+    #app-loading .bar {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      font-size: 20px;
+      font-weight: 500;
     }
-    @keyframes app-loading-spin {
-      to { transform: rotate(360deg); }
+    #app-loading .ver {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.6;
+      border: 1px solid currentColor;
+      border-radius: 10px;
+      padding: 0 7px;
+      line-height: 16px;
+    }
+    #app-loading .page { padding: 16px; }
+    #app-loading .banner { height: 38px; border-radius: 8px; margin-bottom: 12px; }
+    #app-loading .cols {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0 16px;
+    }
+    @media (min-width: 1000px) {
+      #app-loading .cols { grid-template-columns: repeat(3, 1fr); }
+    }
+    #app-loading .col { display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
+    #app-loading .sk {
+      border-radius: 14px;
+      background: linear-gradient(100deg, var(--sk-base) 30%, var(--sk-light) 50%, var(--sk-base) 70%);
+      background-size: 300% 100%;
+      animation: app-loading-sweep 1.4s linear infinite;
+    }
+    #app-loading .label { height: 14px; width: 120px; border-radius: 6px; margin: 6px 0 0; }
+    #app-loading .card { height: 72px; }
+    /* only the first cards of the long section on a narrow screen */
+    @media (max-width: 999px) {
+      #app-loading .card.more { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #app-loading .sk { animation: none; }
+    }
+    @keyframes app-loading-sweep {
+      from { background-position: 100% 0; }
+      to { background-position: 0 0; }
     }
   </style>
-  <div id="app-loading">
-    <div class="spinner"></div>
-    <span>Loading AW139 Tools…</span>
+  <div id="app-loading" role="status" aria-label="Loading AW139 Tools">
+    <div class="bar">AW139 Tools<span class="ver" id="app-ver">v1.0.1</span></div>
+    <div class="page">
+      <div class="sk banner"></div>
+      <div class="cols">
+        <div class="col">
+          <div class="sk label"></div>
+          <div class="sk card"></div><div class="sk card"></div><div class="sk card"></div>
+          <div class="sk card more"></div><div class="sk card more"></div><div class="sk card more"></div>
+          <div class="sk card more"></div>
+        </div>
+        <div class="col">
+          <div class="sk label"></div>
+          <div class="sk card"></div><div class="sk card"></div>
+        </div>
+        <div class="col">
+          <div class="sk label"></div>
+          <div class="sk card"></div><div class="sk card"></div>
+        </div>
+      </div>
+    </div>
   </div>
+  <script>
+    // (the build script puts the version of pubspec.yaml in; without it, as
+    // when run from source, the label is left out)
+    (function () {
+      var v = document.getElementById('app-ver');
+      if (v && v.textContent.indexOf('__') >= 0) v.remove();
+    })();
+  </script>
   <script>
     window.addEventListener('flutter-first-frame', function () {
       var el = document.getElementById('app-loading');
       if (el) el.remove();
+      // Only now let the service worker fetch the big per-tool assets for
+      // offline use: a few seconds after the first screen, so they never
+      // compete with the app's own download, and not at all on a data-saver
+      // or very slow connection (those tools then load on first use).
+      setTimeout(function () {
+        var c = navigator.connection;
+        if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.ready.then(function (reg) {
+          if (reg.active) reg.active.postMessage('start-background');
+        });
+      }, 6000);
     });
   </script>
-  <script src="flutter_bootstrap.js" async></script>
+  <script src="flutter_bootstrap.js?v=20261116175849" async></script>
   <script>
     if ('serviceWorker' in navigator) {
       // sw.js serves everything cache-first, so once installed it never
@@ -185,6 +263,9 @@
               reloadForUpdate();
             }
           });
+        }).catch(function () {
+          // No sw.js: running from source (`flutter run`). The build writes
+          // it (build.ps1, from tool/sw.template.js).
         });
       });
     }
