@@ -206,7 +206,26 @@
       }, 6000);
     });
   </script>
-  <script src="flutter_bootstrap.js?v=20261116175849" async></script>
+  <script>
+    // Safety net: if the app has not drawn its first frame after 20 s, the
+    // start failed (a bad or half-downloaded file, a stale cache). Clear the
+    // service worker caches and reload once; the sessionStorage flag stops
+    // this from looping.
+    setTimeout(function () {
+      if (!document.getElementById('app-loading')) return;
+      try {
+        if (sessionStorage.getItem('aw139-recovered')) return;
+        sessionStorage.setItem('aw139-recovered', '1');
+      } catch (e) { return; }
+      var clear = window.caches
+        ? caches.keys().then(function (ks) {
+            return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+          })
+        : Promise.resolve();
+      clear.catch(function () {}).then(function () { window.location.reload(); });
+    }, 20000);
+  </script>
+  <script src="flutter_bootstrap.js?v=20261120181728" async></script>
   <script>
     if ('serviceWorker' in navigator) {
       // sw.js serves everything cache-first, so once installed it never

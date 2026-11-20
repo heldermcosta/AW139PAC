@@ -9,7 +9,7 @@
 // -BaseHref), so builds on one site do not touch each other's cache. The
 // version changes on every build — forces old caches to be replaced.
 const CACHE_PREFIX = 'aw139pac';
-const CACHE = CACHE_PREFIX + '-20261116175849';
+const CACHE = CACHE_PREFIX + '-20261120181728';
 // Only this build's own earlier caches (prefix, a dash, the 14-digit stamp):
 // another build's name can start with this prefix, but never matches this.
 const OWN_OLD_CACHE = new RegExp('^' + CACHE_PREFIX + '-[0-9]{14}$');
@@ -23,10 +23,10 @@ const PRECACHE = [
   './favicon.png',
   './flutter.js',
   './flutter.js.map',
-  './flutter_bootstrap.js?v=20261116175849',
+  './flutter_bootstrap.js?v=20261120181728',
   './flutter_service_worker.js',
   './index.html',
-  './main.dart.js?v=20261116175849',
+  './main.dart.js?v=20261120181728',
   './manifest.json',
   './version.json',
   './assets/AssetManifest.bin',
@@ -447,11 +447,25 @@ async function networkFirst(req) {
     if (response.ok) cache.put(req, response.clone());
     return response;
   } catch (err) {
-    return (
-      (await cache.match(req)) ||
-      (await cache.match('./index.html')) ||
-      Response.error()
-    );
+    const cached = await cache.match(req);
+    if (cached) return cached;
+    // The page itself may fall back to the cached index.html, but a script
+    // must never: answering a request for flutter_bootstrap.js or
+    // main.dart.js with HTML makes the browser fail to parse it, Flutter
+    // never starts and the loading skeleton stays on screen for good. For
+    // those the network gets the time it needs (no timeout) instead.
+    if (req.mode === 'navigate') {
+      const page = await cache.match('./index.html');
+      if (page) return page;
+    } else {
+      try {
+        return await fetch(req.url);
+      } catch (_) {
+        // offline and not cached: a real network error, which the loader
+        // can report, rather than a wrong file
+      }
+    }
+    return Response.error();
   }
 }
 
