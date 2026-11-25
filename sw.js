@@ -9,7 +9,7 @@
 // -BaseHref), so builds on one site do not touch each other's cache. The
 // version changes on every build — forces old caches to be replaced.
 const CACHE_PREFIX = 'aw139pac';
-const CACHE = CACHE_PREFIX + '-20261124205207';
+const CACHE = CACHE_PREFIX + '-20261125111650';
 // Only this build's own earlier caches (prefix, a dash, the 14-digit stamp):
 // another build's name can start with this prefix, but never matches this.
 const OWN_OLD_CACHE = new RegExp('^' + CACHE_PREFIX + '-[0-9]{14}$');
@@ -23,10 +23,10 @@ const PRECACHE = [
   './favicon.png',
   './flutter.js',
   './flutter.js.map',
-  './flutter_bootstrap.js?v=20261124205207',
+  './flutter_bootstrap.js?v=20261125111650',
   './flutter_service_worker.js',
   './index.html',
-  './main.dart.js?v=20261124205207',
+  './main.dart.js?v=20261125111650',
   './manifest.json',
   './version.json',
   './assets/AssetManifest.bin',
